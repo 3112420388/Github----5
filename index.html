@@ -1,786 +1,523 @@
-<!doctype html>
-<html lang="zh-CN"> 
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>蜘蛛侠官网 - 绿色安卓软件分享社区 | APP下载平台</title>
-  <meta name="description" content="蜘蛛侠社区是专业的安卓绿色应用分享平台，提供人工审核的软件、游戏工具、技术教程，10万+用户推荐的纯净APP下载站，开源应用，支持技术交流。">
-  <meta name="keywords" content="蜘蛛侠,安卓开发,开源软件,技术教程,应用优化">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    :root {
-      --ios-blue: #007AFF;
-      --ios-gray: #F2F2F7;
-      --ios-dark-gray: #1C1C1E;
-      --ios-light-gray: #E5E5EA;
-      --ios-red: #FF3B30;
-      --ios-green: #34C759;
-      --ios-orange: #FF9500;
-      --ios-purple: #AF52DE;
-      --ios-pink: #FF2D55;
-      --ios-card-radius: 14px;
-      --ios-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-    
-    body {
-      background-color: var(--ios-gray);
-      color: #333;
-      line-height: 1.6;
-      overflow-x: hidden;
-      position: relative;
-    }
-    
-    /* iOS风格导航栏 */
-    .ios-navbar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 88px;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
-      z-index: 1000;
-      display: flex;
-      align-items: flex-end;
-      padding-bottom: 12px;
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-    
-    .ios-navbar-title {
-      font-size: 20px;
-      font-weight: 600;
-      flex-grow: 1;
-      text-align: center;
-    }
-    
-    .ios-navbar-button {
-      width: 40px;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--ios-blue);
-      font-size: 18px;
-    }
-    
-    /* 侧边菜单 */
-    .ios-side-menu {
-      position: fixed;
-      top: 0;
-      left: -80%;
-      width: 80%;
-      max-width: 320px;
-      height: 100%;
-      background: white;
-      z-index: 1001;
-      transition: transform 0.3s ease;
-      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.1);
-      overflow-y: auto;
-      padding-top: 88px;
-    }
-    
-    .ios-side-menu.open {
-      transform: translateX(100%);
-    }
-    
-    .ios-side-menu-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    
-    .ios-side-menu-overlay.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-    
-    .ios-menu-header {
-      padding: 24px 20px;
-      background: linear-gradient(135deg, #6e8efb, #a777e3);
-      color: white;
-      display: flex;
-      align-items: center;
-    }
-    
-    .ios-menu-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 30px;
-      background: white;
-      margin-right: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      color: #6e8efb;
-    }
-    
-    .ios-menu-user {
-      flex-grow: 1;
-    }
-    
-    .ios-menu-user h3 {
-      font-size: 18px;
-      margin-bottom: 4px;
-    }
-    
-    .ios-menu-user p {
-      font-size: 14px;
-      opacity: 0.8;
-    }
-    
-    .ios-menu-item {
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      border-bottom: 0.5px solid var(--ios-light-gray);
-      color: #333;
-      text-decoration: none;
-    }
-    
-    .ios-menu-item i {
-      margin-right: 16px;
-      width: 24px;
-      text-align: center;
-      color: var(--ios-blue);
-    }
-    
-    .ios-menu-item.active {
-      background-color: rgba(0, 122, 255, 0.1);
-    }
-    
-    /* 主内容区域 */
-    .ios-main-content {
-      margin-top: 88px;
-      padding: 20px;
-      padding-bottom: 80px;
-    }
-    
-    /* iOS风格卡片 */
-    .ios-card {
-      background: white;
-      border-radius: var(--ios-card-radius);
-      box-shadow: var(--ios-shadow);
-      margin-bottom: 20px;
-      overflow: hidden;
-    }
-    
-    .ios-card-header {
-      padding: 16px;
-      font-weight: 600;
-      border-bottom: 0.5px solid var(--ios-light-gray);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .ios-card-body {
-      padding: 16px;
-    }
-    
-    /* 轮播图 */
-    .ios-carousel {
-      position: relative;
-      border-radius: var(--ios-card-radius);
-      overflow: hidden;
-      height: 200px;
-      margin-bottom: 20px;
-    }
-    
-    .ios-carousel-item {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      background-size: cover;
-      background-position: center;
-    }
-    
-    .ios-carousel-item.active {
-      opacity: 1;
-    }
-    
-    .ios-carousel-indicators {
-      position: absolute;
-      bottom: 10px;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-    }
-    
-    .ios-carousel-indicator {
-      width: 8px;
-      height: 8px;
-      border-radius: 4px;
-      background: rgba(255, 255, 255, 0.5);
-    }
-    
-    .ios-carousel-indicator.active {
-      background: white;
-    }
-    
-    /* 统计卡片 */
-    .ios-stats-container {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-    
-    .ios-stat-card {
-      background: white;
-      border-radius: var(--ios-card-radius);
-      padding: 16px;
-      text-align: center;
-      box-shadow: var(--ios-shadow);
-    }
-    
-    .ios-stat-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 20px;
-      background: var(--ios-blue);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 12px;
-      color: white;
-    }
-    
-    .ios-stat-number {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: var(--ios-blue);
-    }
-    
-    .ios-stat-label {
-      font-size: 14px;
-      color: #666;
-    }
-    
-    /* 按钮 */
-    .ios-button {
-      display: inline-block;
-      padding: 12px 20px;
-      background: var(--ios-blue);
-      color: white;
-      border-radius: 10px;
-      text-decoration: none;
-      text-align: center;
-      font-weight: 500;
-      border: none;
-      font-size: 16px;
-      transition: opacity 0.2s ease;
-    }
-    
-    .ios-button:active {
-      opacity: 0.8;
-    }
-    
-    .ios-button.outline {
-      background: transparent;
-      border: 1px solid var(--ios-blue);
-      color: var(--ios-blue);
-    }
-    
-    .ios-button-group {
-      display: flex;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    
-    /* 模态框 */
-    .ios-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1002;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    
-    .ios-modal.open {
-      opacity: 1;
-      pointer-events: all;
-    }
-    
-    .ios-modal-content {
-      background: white;
-      width: 90%;
-      max-width: 400px;
-      border-radius: var(--ios-card-radius);
-      overflow: hidden;
-      transform: translateY(20px);
-      transition: transform 0.3s ease;
-    }
-    
-    .ios-modal.open .ios-modal-content {
-      transform: translateY(0);
-    }
-    
-    .ios-modal-header {
-      padding: 16px;
-      text-align: center;
-      font-weight: 600;
-      border-bottom: 0.5px solid var(--ios-light-gray);
-      position: relative;
-    }
-    
-    .ios-modal-close {
-      position: absolute;
-      left: 16px;
-      top: 16px;
-      color: var(--ios-blue);
-      font-size: 20px;
-    }
-    
-    .ios-modal-body {
-      padding: 16px;
-    }
-    
-    .ios-modal-footer {
-      padding: 16px;
-      display: flex;
-      justify-content: flex-end;
-      border-top: 0.5px solid var(--ios-light-gray);
-    }
-    
-    /* 底部标签栏 */
-    .ios-tab-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 80px;
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 0.5px solid rgba(0, 0, 0, 0.1);
-      display: flex;
-      z-index: 999;
-    }
-    
-    .ios-tab-item {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #666;
-      text-decoration: none;
-      font-size: 12px;
-    }
-    
-    .ios-tab-item i {
-      font-size: 24px;
-      margin-bottom: 4px;
-    }
-    
-    .ios-tab-item.active {
-      color: var(--ios-blue);
-    }
-    
-    /* 响应式调整 */
-    @media (min-width: 768px) {
-      .ios-stats-container {
-        grid-template-columns: 1fr 1fr 1fr;
-      }
-      
-      .ios-carousel {
-        height: 300px;
-      }
-    }
-    
-    /* 动画 */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.5s ease;
-    }
-  </style>
-</head> 
-<body>
-  <!-- iOS风格导航栏 -->
-  <div class="ios-navbar">
-    <div class="ios-navbar-button" id="menu-button">
-      <i class="fas fa-bars"></i>
-    </div>
-    <div class="ios-navbar-title">蜘蛛侠</div>
-    <div class="ios-navbar-button">
-      <i class="fas fa-search"></i>
-    </div>
-  </div>
-  
-  <!-- 侧边菜单 -->
-  <div class="ios-side-menu" id="side-menu">
-    <div class="ios-menu-header">
-      <div class="ios-menu-avatar">
-        <i class="fas fa-gem"></i>
-      </div>
-      <div class="ios-menu-user">
-        <h3>蜘蛛侠社区</h3>
-        <p>绿色软件分享平台</p>
-      </div>
-    </div>
-    
-    <a href="#" class="ios-menu-item active">
-      <i class="fas fa-home"></i>
-      <span>首页</span>
-    </a>
-    
-    <a href="http://m.dblfb.top" class="ios-menu-item">
-      <i class="fas fa-globe"></i>
-      <span>蜘蛛侠网页版</span>
-    </a>
-    
-    <a href="#" class="ios-menu-item" id="about-button">
-      <i class="fas fa-info-circle"></i>
-      <span>关于</span>
-    </a>
-    
-    <a href="gx.html" class="ios-menu-item">
-      <i class="fas fa-history"></i>
-      <span>更新历史</span>
-    </a>
-    
-    <a href="gz.html" class="ios-menu-item">
-      <i class="fas fa-book"></i>
-      <span>社区规则</span>
-    </a>
-    
-    <a href="ios/index.html" class="ios-menu-item">
-      <i class="fab fa-apple"></i>
-      <span>社区IOS</span>
-    </a>
-    
-    <a href="https://h5.lllt.top/#/pages/forum/info?id=795" class="ios-menu-item">
-      <i class="fas fa-comments"></i>
-      <span>社区论坛</span>
-    </a>
-    
-    <a href="http://m.dblfb.top:760/" class="ios-menu-item">
-      <i class="fas fa-image"></i>
-      <span>蜘蛛侠随机壁纸</span>
-    </a>
-    
-    <a href="http://m.dblfb.top/" class="ios-menu-item">
-      <i class="fas fa-shopping-bag"></i>
-      <span>官方商城</span>
-    </a>
-  </div>
-  
-  <div class="ios-side-menu-overlay" id="side-menu-overlay"></div>
-  
-  <!-- 主内容区域 -->
-  <div class="ios-main-content">
-    <!-- 轮播图 -->
-    <div class="ios-carousel">
-      <div class="ios-carousel-item active" style="background-image: url('https://p2.a.yximgs.com/upic/2025/07/15/15/BMjAyNTA3MTUxNTMwMTNfNDMzMjg3NTc2NF8xNjk1MjM5MzMyMTJfMl82_B01588c7336691d733e34dddf2bfc84d6.jpg');"></div>
-      <div class="ios-carousel-item" style="background-image: url('https://p2.a.yximgs.com/upic/2025/07/15/15/BMjAyNTA3MTUxNTMwMTNfNDMzMjg3NTc2NF8xNjk1MjM5MzMyMTJfMl82_B01588c7336691d733e34dddf2bfc84d6.jpg');"></div>
-      <div class="ios-carousel-item" style="background-image: url('https://p2.a.yximgs.com/upic/2025/07/15/15/BMjAyNTA3MTUxNTMwMTNfNDMzMjg3NTc2NF8xNjk1MjM5MzMyMTJfMl82_B01588c7336691d733e34dddf2bfc84d6.jpg');"></div>
-      
-      <div class="ios-carousel-indicators">
-        <div class="ios-carousel-indicator active"></div>
-        <div class="ios-carousel-indicator"></div>
-        <div class="ios-carousel-indicator"></div>
-      </div>
-    </div>
-    
-    <!-- 统计卡片 -->
-    <div class="ios-stats-container">
-      <div class="ios-stat-card">
-        <div class="ios-stat-icon">
-          <i class="fas fa-users"></i>
-        </div>
-        <div class="ios-stat-number">999+</div>
-        <div class="ios-stat-label">用户数量</div>
-      </div>
-      
-      <div class="ios-stat-card">
-        <div class="ios-stat-icon" style="background: var(--ios-green);">
-          <i class="fas fa-file-alt"></i>
-        </div>
-        <div class="ios-stat-number" style="color: var(--ios-green);">999+</div>
-        <div class="ios-stat-label">帖子数量</div>
-      </div>
-
-    </div>
-    
-    <!-- 关于卡片 -->
-    <div class="ios-card fade-in">
-      <div class="ios-card-header">
-        <span>关于蜘蛛侠</span>
-      </div>
-      <div class="ios-card-body">
-        <p>蜘蛛侠社区是专业的安卓绿色应用分享平台，提供人工审核的软件、游戏工具、技术教程，10万+用户推荐的纯净APP下载站，开源应用，支持技术交流。</p>
-        
-        <div class="ios-button-group">
-          <a href="javascript:void(0);" onclick="showDownloadOptions()" class="ios-button">社区下载</a>
-          <a href="ios/index.html" class="ios-button outline">社区IOS</a>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 特色功能 -->
-    <div class="ios-card fade-in">
-      <div class="ios-card-header">
-        <span>为什么选择蜘蛛侠？</span>
-      </div>
-      <div class="ios-card-body">
-        <div style="display: flex; align-items: center; margin-bottom: 16px;">
-          <div style="width: 40px; height: 40px; background: var(--ios-blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
-            <i class="fas fa-shield-alt"></i>
-          </div>
-          <div>
-            <h4 style="margin-bottom: 4px;">绿色检测</h4>
-            <p style="font-size: 14px; color: #666;">所有应用经过人工审核</p>
-          </div>
-        </div>
-        
-        <div style="display: flex; align-items: center; margin-bottom: 16px;">
-          <div style="width: 40px; height: 40px; background: var(--ios-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
-            <i class="fas fa-sync-alt"></i>
-          </div>
-          <div>
-            <h4 style="margin-bottom: 4px;">及时更新</h4>
-            <p style="font-size: 14px; color: #666;">每日更新版本</p>
-          </div>
-        </div>
-        
-        <div style="display: flex; align-items: center; margin-bottom: 16px;">
-          <div style="width: 40px; height: 40px; background: var(--ios-orange); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
-            <i class="fas fa-ban"></i>
-          </div>
-          <div>
-            <h4 style="margin-bottom: 4px;">纯净体验</h4>
-            <p style="font-size: 14px; color: #666;">精选无广告开源应用</p>
-          </div>
-        </div>
-        
-        <div style="display: flex; align-items: center;">
-          <div style="width: 40px; height: 40px; background: var(--ios-purple); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 12px; color: white;">
-            <i class="fas fa-code"></i>
-          </div>
-          <div>
-            <h4 style="margin-bottom: 4px;">开发者支持</h4>
-            <p style="font-size: 14px; color: #666;">开源项目协作与代码审核</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 联系信息 -->
-    <div class="ios-card fade-in">
-      <div class="ios-card-header">
-        <span>联系我们</span>
-      </div>
-      <div class="ios-card-body">
-        <div style="margin-bottom: 12px;">
-          <strong>站长QQ:</strong> 
-          <a href="http://api.yujn.cn/api/qqmp.php?qq=3287701827" rel="noopener">3287701827</a>
-        </div>
-        
-        <div style="margin-bottom: 12px;">
-          <strong>邮箱:</strong> 
-          <a href="mailto:3287701827@qq.com">3287701827@qq.com</a>
-        </div>
-        
-        <div>
-          <strong>友情链接:</strong>
-          <div style="margin-top: 8px;">
-            <a href="https://biancheng.lanzoul.com/b068tt80b" rel="noopener" style="display: inline-block; margin-right: 8px; margin-bottom: 8px; padding: 4px 8px; background: var(--ios-light-gray); border-radius: 6px; font-size: 14px;">蜘蛛侠APP</a>
-            <a href="http://dbl.dblfb.top/" rel="noopener" style="display: inline-block; margin-right: 8px; margin-bottom: 8px; padding: 4px 8px; background: var(--ios-light-gray); border-radius: 6px; font-size: 14px;">碉堡了论坛</a>
-            <a href="http://api.yujn.cn/api/qqmp.php?qq=3287701827" rel="noopener" style="display: inline-block; margin-right: 8px; margin-bottom: 8px; padding: 4px 8px; background: var(--ios-light-gray); border-radius: 6px; font-size: 14px;">申请友联</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- 下载选项模态框 -->
-  <div class="ios-modal" id="download-modal">
-    <div class="ios-modal-content">
-      <div class="ios-modal-header">
-        <div class="ios-modal-close" onclick="closeModal()">
-          <i class="fas fa-times"></i>
-        </div>
-        <span>选择下载渠道</span>
-      </div>
-      <div class="ios-modal-body">
-        <p style="margin-bottom: 16px;">请选择您喜欢的下载方式：</p>
-        
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-          <button onclick="downloadFile('http://m.dblfb.top')" class="ios-button" style="width: 100%;">
-            <i class="fas fa-download" style="margin-right: 8px;"></i>官方主站下载
-          </button>
-          
-          <button onclick="downloadFile('https://biancheng.lanzoul.com/b068tt80b')" class="ios-button" style="width: 100%; background: var(--ios-green);">
-            <i class="fas fa-cloud-download-alt" style="margin-right: 8px;"></i>蓝奏云下载
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- 关于模态框 -->
-  <div class="ios-modal" id="about-modal">
-    <div class="ios-modal-content">
-      <div class="ios-modal-header">
-        <div class="ios-modal-close" onclick="closeAboutModal()">
-          <i class="fas fa-times"></i>
-        </div>
-        <span>关于蜘蛛侠</span>
-      </div>
-      <div class="ios-modal-body">
-        <p style="margin-bottom: 16px;">蜘蛛侠是一个综合性的绿色软件分享交流社区，专注于技术教程、软件分享、游戏工具、活动通知等服务。</p>
-        
-        <p style="margin-bottom: 16px;">特色网络资源，汇聚网络精华，资源稀缺。由技术大佬打造。在此，与伙伴共享知识、交流技术，探索创新，拓宽视野。</p>
-        
-        <p>有问题可以去企鹅频道或社区反馈即可，如有侵权请联系3287701827@qq.com</p>
-      </div>
-    </div>
-  </div>
-  
-  <!-- 底部标签栏 -->
-  <div class="ios-tab-bar">
-    <a href="#" class="ios-tab-item active">
-      <i class="fas fa-home"></i>
-      <span>首页</span>
-    </a>
-    
-    <a href="http://m.dblfb.top" class="ios-tab-item">
-      <i class="fas fa-globe"></i>
-      <span>网页版</span>
-    </a>
-    
-    <a href="http://m.dblfb.top" class="ios-tab-item">
-      <i class="fas fa-comments"></i>
-      <span>论坛</span>
-    </a>
-    
-    <a href="javascript:void(0);" onclick="showDownloadOptions()" class="ios-tab-item">
-      <i class="fas fa-download"></i>
-      <span>下载</span>
-    </a>
-  </div>
-  
-  <script>
-    // 侧边菜单控制
-    const menuButton = document.getElementById('menu-button');
-    const sideMenu = document.getElementById('side-menu');
-    const sideMenuOverlay = document.getElementById('side-menu-overlay');
-    
-    menuButton.addEventListener('click', () => {
-      sideMenu.classList.add('open');
-      sideMenuOverlay.classList.add('open');
-    });
-    
-    sideMenuOverlay.addEventListener('click', () => {
-      sideMenu.classList.remove('open');
-      sideMenuOverlay.classList.remove('open');
-    });
-    
-    // 轮播图控制
-    const carouselItems = document.querySelectorAll('.ios-carousel-item');
-    const carouselIndicators = document.querySelectorAll('.ios-carousel-indicator');
-    let currentSlide = 0;
-    
-    function showSlide(index) {
-      carouselItems.forEach(item => item.classList.remove('active'));
-      carouselIndicators.forEach(indicator => indicator.classList.remove('active'));
-      
-      carouselItems[index].classList.add('active');
-      carouselIndicators[index].classList.add('active');
-      currentSlide = index;
-    }
-    
-    function nextSlide() {
-      let next = currentSlide + 1;
-      if (next >= carouselItems.length) next = 0;
-      showSlide(next);
-    }
-    
-    // 自动轮播
-    setInterval(nextSlide, 5000);
-    
-    // 点击指示器切换
-    carouselIndicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', () => {
-        showSlide(index);
-      });
-    });
-    
-    // 下载模态框控制
-    function showDownloadOptions() {
-      document.getElementById('download-modal').classList.add('open');
-    }
-    
-    function closeModal() {
-      document.getElementById('download-modal').classList.remove('open');
-    }
-    
-    // 关于模态框控制
-    document.getElementById('about-button').addEventListener('click', (e) => {
-      e.preventDefault();
-      document.getElementById('about-modal').classList.add('open');
-    });
-    
-    function closeAboutModal() {
-      document.getElementById('about-modal').classList.remove('open');
-    }
-    
-    // 点击模态框外部关闭
-    document.querySelectorAll('.ios-modal').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('open');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>科幻验证系统</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-      });
-    });
+        body {
+            background: linear-gradient(135deg, #0a0e2a 0%, #1a1f4b 100%);
+            color: #e0e0ff;
+            padding: 20px;
+            min-width: 280px;
+            max-width: 400px;
+            margin: 0 auto;
+            -webkit-user-select: none;
+            user-select: none;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 主容器 */
+        .scifi-container {
+            width: 100%;
+            background: rgba(10, 14, 42, 0.8);
+            border: 1px solid #4a4fff;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 0 25px rgba(74, 79, 255, 0.4),
+                        inset 0 0 15px rgba(74, 79, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 科幻边框效果 */
+        .scifi-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4a4fff, transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 标题样式 */
+        .scifi-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #4a4fff;
+            text-shadow: 0 0 10px rgba(74, 79, 255, 0.7);
+        }
+        
+        /* 公告样式 */
+        .scifi-announcement {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            padding: 12px;
+            background: rgba(20, 25, 60, 0.5);
+            border-radius: 8px;
+            border-left: 3px solid #4a4fff;
+        }
+        
+        /* ID显示区域 */
+        .scifi-id-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .scifi-id-label {
+            font-size: 14px;
+            color: #8a8dff;
+        }
+        .scifi-id-value {
+            font-size: 14px;
+            padding: 10px 12px;
+            background: rgba(20, 25, 60, 0.7);
+            border: 1px solid #4a4fff;
+            border-radius: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .scifi-copy-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: none;
+            border-radius: 4px;
+            background: linear-gradient(135deg, #4a4fff 0%, #3136c9 100%);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .scifi-copy-btn:hover {
+            background: linear-gradient(135deg, #5a5fff 0%, #4146d9 100%);
+            box-shadow: 0 0 8px rgba(74, 79, 255, 0.6);
+        }
+        
+        /* 输入框区域 */
+        .scifi-input-group {
+            margin-bottom: 24px;
+        }
+        .scifi-input {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 16px;
+            background: rgba(20, 25, 60, 0.7);
+            border: 1px solid #4a4fff;
+            border-radius: 8px;
+            outline: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            -webkit-user-select: text;
+            user-select: text;
+            -webkit-appearance: none;
+        }
+        .scifi-input:focus {
+            border-color: #6a6fff;
+            box-shadow: 0 0 12px rgba(106, 111, 255, 0.5);
+        }
+        .scifi-input-hint {
+            font-size: 12px;
+            color: #8a8dff;
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+        
+        /* 按钮区域 */
+        .scifi-btn-group {
+            display: flex;
+            gap: 12px;
+        }
+        .scifi-btn {
+            flex: 1;
+            padding: 14px 0;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4a4fff 0%, #3136c9 100%);
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .scifi-btn:hover {
+            background: linear-gradient(135deg, #5a5fff 0%, #4146d9 100%);
+            box-shadow: 0 0 15px rgba(74, 79, 255, 0.7);
+            transform: translateY(-2px);
+        }
+        .scifi-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* 自定义按钮 */
+        .scifi-custom-btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        
+        /* 加载中样式 */
+        .scifi-loading {
+            display: none;
+            text-align: center;
+            padding: 30px 0;
+        }
+        .scifi-loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(74, 79, 255, 0.2);
+            border-top-color: #4a4fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 12px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .scifi-loading-text {
+            font-size: 16px;
+            color: #8a8dff;
+        }
+        
+        /* 错误提示样式 */
+        .scifi-error {
+            color: #ff4a4a;
+            font-size: 13px;
+            margin-top: 6px;
+            padding-left: 4px;
+            display: none;
+            text-shadow: 0 0 5px rgba(255, 74, 74, 0.5);
+        }
+        
+        /* 颜色代码样式 */
+        .color-code {
+            font-weight: bold;
+        }
+        
+        /* 粒子背景效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
     
-    // 下载文件
-    function downloadFile(url) {
-      window.location.href = url;
-      closeModal();
-    }
-    
-    // 自动更新版权年份
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('current-year').textContent = new Date().getFullYear();
-    });
-  </script>
+    <!-- 加载中区域 -->
+    <div class="scifi-loading" id="loading">
+        <div class="scifi-loading-spinner"></div>
+        <div class="scifi-loading-text">验证中...</div>
+    </div>
+
+    <!-- 主内容区域（初始隐藏） -->
+    <div class="scifi-container" id="main-content" style="display: none;">
+        <!-- 标题（由原生配置填充） -->
+        <h1 class="scifi-title" id="dialog-title"></h1>
+
+        <!-- 公告（由原生配置填充，可选） -->
+        <div class="scifi-announcement" id="announcement"></div>
+
+        <!-- ID显示与复制 -->
+        <div class="scifi-id-group">
+            <div class="scifi-id-label">设备标识码</div>
+            <div class="scifi-id-value">
+                <span id="device-id">加载中...</span>
+                <button class="scifi-copy-btn" onclick="copyId()">复制</button>
+            </div>
+        </div>
+
+        <!-- 卡密输入框 -->
+        <div class="scifi-input-group">
+            <input type="text" class="scifi-input" id="verify-code" placeholder="请输入访问密钥" maxlength="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+            <div class="scifi-input-hint">密钥长度为8-200位，含字母和数字</div>
+            <div class="scifi-error" id="error-message"></div>
+        </div>
+
+        <!-- 功能按钮组 -->
+        <div class="scifi-btn-group">
+            <button class="scifi-btn" onclick="submitVerify()">验证授权</button>
+        </div>
+
+        <!-- 自定义按钮（由原生配置控制显示/隐藏） -->
+        <div class="scifi-custom-btn-group" id="custom-button-group" style="display: none;">
+            <button class="scifi-btn" id="custom-button" onclick="openButtonLink()">获取密钥</button>
+        </div>
+    </div>
+
+    <script>
+        // 创建粒子背景
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const count = 40;
+            
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 3 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = '#4a4fff';
+                particle.style.borderRadius = '50%';
+                particle.style.boxShadow = '0 0 5px #4a4fff';
+                
+                // 随机位置
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // 动画
+                const duration = Math.random() * 10 + 10;
+                particle.style.animation = `float ${duration}s linear infinite`;
+                
+                const keyframes = `
+                @keyframes float {
+                    0% { transform: translate(0, 0); opacity: ${Math.random() * 0.5 + 0.2}; }
+                    50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px); opacity: ${Math.random() * 0.5 + 0.5}; }
+                    100% { transform: translate(0, 0); opacity: ${Math.random() * 0.5 + 0.2}; }
+                }`;
+                
+                const styleSheet = document.createElement('style');
+                styleSheet.textContent = keyframes;
+                document.head.appendChild(styleSheet);
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // 解析颜色代码的函数
+        function parseColorCodes(text) {
+            // 匹配6位或3位的十六进制颜色代码
+            const colorRegex = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})([^#]*?)(?=#|$)/g;
+            let result = '';
+            let lastIndex = 0;
+            let match;
+            
+            // 如果没有颜色代码，直接返回文本
+            if (!text.includes('#')) {
+                return text;
+            }
+            
+            // 遍历所有匹配项
+            while ((match = colorRegex.exec(text)) !== null) {
+                // 添加匹配项之前的文本
+                result += text.substring(lastIndex, match.index);
+                
+                const colorCode = match[1];
+                const content = match[2];
+                
+                // 如果是3位颜色代码，扩展为6位
+                const fullColorCode = colorCode.length === 3 
+                    ? colorCode.split('').map(c => c + c).join('')
+                    : colorCode;
+                
+                // 创建带颜色的span
+                result += `<span class="color-code" style="color: #${fullColorCode};">${content}</span>`;
+                
+                lastIndex = match.index + match[0].length;
+            }
+            
+            // 添加剩余文本
+            result += text.substring(lastIndex);
+            
+            return result;
+        }
+
+        // 初始化：等待原生配置数据，渲染页面
+        window.onload = function() {
+            // 创建粒子背景
+            createParticles();
+            
+            try {
+                // 调用原生接口获取配置数据（NativeBridge由HtmlDialogHelper注入）
+                const configStr = window.NativeBridge.getConfigData();
+                const config = JSON.parse(configStr || '{}');
+                
+                console.log('获取到配置:', config);
+                
+                // 填充配置到页面（解析颜色代码）
+                const titleElement = document.getElementById('dialog-title');
+                const announcementElement = document.getElementById('announcement');
+                
+                if (config.title) {
+                    titleElement.innerHTML = parseColorCodes(config.title);
+                } else {
+                    titleElement.textContent = '系统访问验证';
+                }
+                
+                if (config.announcement) {
+                    announcementElement.innerHTML = parseColorCodes(config.announcement);
+                } else {
+                    announcementElement.textContent = '请输入您的访问密钥以完成身份验证';
+                }
+                
+                // 显示设备ID
+                if (config.deviceId) {
+                    document.getElementById('device-id').textContent = config.deviceId;
+                }
+                
+                // 控制自定义按钮显示/隐藏
+                const customBtnGroup = document.getElementById('custom-button-group');
+                if (config.showButton === true) {
+                    customBtnGroup.style.display = 'flex';
+                    
+                    // 设置自定义按钮文本（如果提供了buttonText）
+                    if (config.buttonText) {
+                        document.getElementById('custom-button').textContent = config.buttonText;
+                    }
+                }
+                
+                // 切换到主内容（隐藏加载中）
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                
+                // 自动聚焦到输入框
+                setTimeout(() => {
+                    const input = document.getElementById('verify-code');
+                    input.focus();
+                    
+                    // 额外的触摸事件处理，确保移动设备键盘弹出
+                    input.addEventListener('touchstart', function(e) {
+                        e.stopPropagation();
+                        this.focus();
+                    });
+                    
+                    input.addEventListener('touchend', function(e) {
+                        e.stopPropagation();
+                        this.focus();
+                    });
+                    
+                    input.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        this.focus();
+                    });
+                }, 300);
+                
+            } catch (e) {
+                console.error('配置加载失败:', e);
+                alert('配置加载失败：' + e.message);
+                closeDialog();
+            }
+        };
+
+        // 1. 复制ID到剪贴板（调用原生复制接口）
+        function copyId() {
+            try {
+                const deviceId = document.getElementById('device-id').textContent;
+                // 调用原生copyId方法
+                window.NativeBridge.copyId();
+                // 提示用户
+                alert('设备标识码已复制：\n' + deviceId);
+            } catch (e) {
+                console.error('复制失败:', e);
+                alert('复制失败：' + e.message);
+            }
+        }
+
+        // 2. 提交卡密验证（调用原生验证接口）
+        function submitVerify() {
+            const verifyCode = document.getElementById('verify-code').value.trim();
+            const errorElement = document.getElementById('error-message');
+            
+            // 隐藏之前的错误信息
+            errorElement.style.display = 'none';
+            
+            // 前端简单校验
+            if (!verifyCode) {
+                showError('请输入访问密钥');
+                return;
+            }
+            
+            if (verifyCode.length < 8 || verifyCode.length > 200) {
+                showError('密钥长度应为8-200位');
+                return;
+            }
+            
+            // 显示加载中
+            document.getElementById('main-content').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+            document.querySelector('.scifi-loading-text').textContent = '验证中...';
+            
+            // 调用原生验证接口
+            try {
+                window.NativeBridge.verifyInput(verifyCode);
+            } catch (e) {
+                console.error('验证调用失败:', e);
+                // 恢复显示
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                showError('验证调用失败：' + e.message);
+            }
+        }
+
+        // 显示错误信息
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // 3. 打开自定义按钮链接（调用原生链接接口）
+        function openButtonLink() {
+            try {
+                // 调用原生openButtonLink方法
+                window.NativeBridge.openButtonLink();
+            } catch (e) {
+                console.error('打开链接失败:', e);
+                alert('打开链接失败：' + e.message);
+            }
+        }
+
+        // 4. 关闭弹窗（调用原生关闭接口）
+        function closeDialog() {
+            try {
+                window.NativeBridge.closeDialog();
+            } catch (e) {
+                console.error('关闭弹窗失败:', e);
+                // 降级处理：直接隐藏页面
+                document.body.innerHTML = '<div style="text-align:center;padding:20px;">验证系统已关闭</div>';
+            }
+        }
+
+        // 防止页面滚动（但允许输入框内的滚动）
+        document.addEventListener('touchmove', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
 </body>
 </html>
