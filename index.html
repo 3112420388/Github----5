@@ -2,522 +2,794 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>科幻验证系统</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>卡密验证</title>
     <style>
-        /* 基础样式重置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Roboto', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+
         body {
-            background: linear-gradient(135deg, #0a0e2a 0%, #1a1f4b 100%);
-            color: #e0e0ff;
-            padding: 20px;
-            min-width: 280px;
-            max-width: 400px;
-            margin: 0 auto;
-            -webkit-user-select: none;
-            user-select: none;
+            background: 
+                radial-gradient(ellipse at top left, rgba(120, 119, 198, 0.3), transparent 50%),
+                radial-gradient(ellipse at top right, rgba(255, 119, 198, 0.3), transparent 50%),
+                radial-gradient(ellipse at center right, rgba(200, 119, 255, 0.3), transparent 50%),
+                radial-gradient(ellipse at center left, rgba(119, 200, 255, 0.3), transparent 50%),
+                linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        /* 主容器 */
-        .scifi-container {
-            width: 100%;
-            background: rgba(10, 14, 42, 0.8);
-            border: 1px solid #4a4fff;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 0 25px rgba(74, 79, 255, 0.4),
-                        inset 0 0 15px rgba(74, 79, 255, 0.2);
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.9);
             position: relative;
             overflow: hidden;
         }
-        
-        /* 科幻边框效果 */
-        .scifi-container::before {
+
+        /* 空间网格效果 */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            perspective: 1000px;
+            transform: rotateX(60deg) scale(2);
+            animation: spatialMove 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spatialMove {
+            0% { transform: rotateX(60deg) scale(2) translateZ(0px); }
+            100% { transform: rotateX(60deg) scale(2) translateZ(50px); }
+        }
+
+        .glass-panel {
+            width: 100%;
+            max-width: 400px;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    rgba(255, 255, 255, 0.1) 100%
+                );
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 32px 64px rgba(120, 119, 198, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: panelFloat 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes panelFloat {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.9) rotateX(10deg);
+                filter: blur(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1) rotateX(0deg);
+                filter: blur(0);
+            }
+        }
+
+        /* 液态边框动画 */
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, 
+                    transparent, 
+                    rgba(120, 119, 198, 0.4), 
+                    transparent, 
+                    rgba(255, 119, 198, 0.4), 
+                    transparent
+                );
+            border-radius: 24px;
+            opacity: 0;
+            animation: liquidFlow 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes liquidFlow {
+            0%, 100% { opacity: 0; transform: rotate(0deg) scale(1); }
+            50% { opacity: 0.3; transform: rotate(180deg) scale(1.02); }
+        }
+
+        .panel-header {
+            padding: 32px 28px 24px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .spatial-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(120, 119, 198, 0.8), 
+                    rgba(255, 119, 198, 0.6)
+                );
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 
+                0 8px 32px rgba(120, 119, 198, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+            animation: iconLevitate 3s ease-in-out infinite;
+            position: relative;
+        }
+
+        @keyframes iconLevitate {
+            0%, 100% { transform: translateY(0px) rotateY(0deg); }
+            50% { transform: translateY(-8px) rotateY(180deg); }
+        }
+
+        .spatial-icon::after {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(120, 119, 198, 0.3);
+            border-radius: 50%;
+            animation: halo 2s linear infinite;
+        }
+
+        @keyframes halo {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(1.4) rotate(360deg); opacity: 0; }
+        }
+
+        .panel-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 1) 0%,
+                rgba(120, 119, 198, 0.8) 50%,
+                rgba(255, 255, 255, 1) 100%
+            );
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .panel-subtitle {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .panel-content {
+            padding: 0 28px 32px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-container {
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(120, 119, 198, 0.9);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .spatial-input {
+            width: 100%;
+            height: 52px;
+            padding: 0 20px;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.9);
+            background: 
+                linear-gradient(135deg, 
+                    rgba(255, 255, 255, 0.1), 
+                    rgba(255, 255, 255, 0.05)
+                );
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+        }
+
+        .spatial-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .spatial-input:focus {
+            outline: none;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(120, 119, 198, 0.2), 
+                    rgba(255, 119, 198, 0.1)
+                );
+            border-color: rgba(120, 119, 198, 0.6);
+            box-shadow: 
+                0 0 0 4px rgba(120, 119, 198, 0.2),
+                0 8px 32px rgba(120, 119, 198, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .device-matrix {
+            background: 
+                linear-gradient(135deg, 
+                    rgba(0, 0, 0, 0.3), 
+                    rgba(255, 255, 255, 0.05)
+                );
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 24px;
+            backdrop-filter: blur(15px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .device-matrix::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 2px;
-            background: linear-gradient(90deg, transparent, #4a4fff, transparent);
-            animation: scanline 3s linear infinite;
+            background: linear-gradient(90deg, 
+                transparent,
+                rgba(120, 119, 198, 0.8),
+                rgba(255, 119, 198, 0.6),
+                transparent
+            );
+            animation: dataFlow 3s ease-in-out infinite;
         }
-        
-        @keyframes scanline {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+
+        @keyframes dataFlow {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
         }
-        
-        /* 标题样式 */
-        .scifi-title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #4a4fff;
-            text-shadow: 0 0 10px rgba(74, 79, 255, 0.7);
-        }
-        
-        /* 公告样式 */
-        .scifi-announcement {
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-            padding: 12px;
-            background: rgba(20, 25, 60, 0.5);
-            border-radius: 8px;
-            border-left: 3px solid #4a4fff;
-        }
-        
-        /* ID显示区域 */
-        .scifi-id-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .scifi-id-label {
-            font-size: 14px;
-            color: #8a8dff;
-        }
-        .scifi-id-value {
-            font-size: 14px;
-            padding: 10px 12px;
-            background: rgba(20, 25, 60, 0.7);
-            border: 1px solid #4a4fff;
-            border-radius: 6px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+
+        .matrix-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 12px;
+            padding: 6px 0;
+            font-family: 'SF Mono', Monaco, monospace;
         }
-        .scifi-copy-btn {
-            padding: 6px 12px;
+
+        .matrix-row:last-child {
+            margin-bottom: 0;
+            justify-content: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 16px;
+            margin-top: 16px;
+        }
+
+        .matrix-key {
+            color: rgba(255, 119, 198, 0.8);
             font-size: 12px;
-            border: none;
-            border-radius: 4px;
-            background: linear-gradient(135deg, #4a4fff 0%, #3136c9 100%);
-            color: #ffffff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .scifi-copy-btn:hover {
-            background: linear-gradient(135deg, #5a5fff 0%, #4146d9 100%);
-            box-shadow: 0 0 8px rgba(74, 79, 255, 0.6);
-        }
-        
-        /* 输入框区域 */
-        .scifi-input-group {
-            margin-bottom: 24px;
-        }
-        .scifi-input {
-            width: 100%;
-            padding: 14px 16px;
-            font-size: 16px;
-            background: rgba(20, 25, 60, 0.7);
-            border: 1px solid #4a4fff;
-            border-radius: 8px;
-            outline: none;
-            color: #ffffff;
-            transition: all 0.3s ease;
-            -webkit-user-select: text;
-            user-select: text;
-            -webkit-appearance: none;
-        }
-        .scifi-input:focus {
-            border-color: #6a6fff;
-            box-shadow: 0 0 12px rgba(106, 111, 255, 0.5);
-        }
-        .scifi-input-hint {
-            font-size: 12px;
-            color: #8a8dff;
-            margin-top: 6px;
-            padding-left: 4px;
-        }
-        
-        /* 按钮区域 */
-        .scifi-btn-group {
-            display: flex;
-            gap: 12px;
-        }
-        .scifi-btn {
-            flex: 1;
-            padding: 14px 0;
-            font-size: 16px;
             font-weight: 600;
-            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .matrix-value {
+            color: rgba(120, 119, 198, 0.9);
+            font-size: 12px;
+            font-weight: 700;
+            background: rgba(120, 119, 198, 0.1);
+            padding: 4px 12px;
             border-radius: 8px;
-            background: linear-gradient(135deg, #4a4fff 0%, #3136c9 100%);
-            color: #ffffff;
+            border: 1px solid rgba(120, 119, 198, 0.3);
+            max-width: 180px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .spatial-button {
+            background: linear-gradient(135deg, 
+                rgba(120, 119, 198, 0.8), 
+                rgba(255, 119, 198, 0.6)
+            );
+            border: none;
+            color: rgba(255, 255, 255, 0.95);
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 8px 32px rgba(120, 119, 198, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
         }
-        .scifi-btn:hover {
-            background: linear-gradient(135deg, #5a5fff 0%, #4146d9 100%);
-            box-shadow: 0 0 15px rgba(74, 79, 255, 0.7);
+
+        .spatial-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.3), 
+                transparent
+            );
+            transition: left 0.6s;
+        }
+
+        .spatial-button:hover::before {
+            left: 100%;
+        }
+
+        .spatial-button:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 12px 40px rgba(120, 119, 198, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.3) inset;
+            filter: brightness(1.1);
+        }
+
+        .spatial-button:active {
+            transform: translateY(-1px) scale(1);
+        }
+
+        .secondary-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .secondary-action:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-        .scifi-btn:active {
-            transform: translateY(0);
+
+        .copy-interface {
+            background: transparent;
+            border: 1px solid rgba(120, 119, 198, 0.5);
+            color: rgba(120, 119, 198, 0.9);
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'SF Mono', Monaco, monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
-        
-        /* 自定义按钮 */
-        .scifi-custom-btn-group {
-            display: flex;
-            gap: 12px;
-            margin-top: 15px;
-        }
-        
-        /* 加载中样式 */
-        .scifi-loading {
-            display: none;
-            text-align: center;
-            padding: 30px 0;
-        }
-        .scifi-loading-spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(74, 79, 255, 0.2);
-            border-top-color: #4a4fff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 12px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        .scifi-loading-text {
-            font-size: 16px;
-            color: #8a8dff;
-        }
-        
-        /* 错误提示样式 */
-        .scifi-error {
-            color: #ff4a4a;
-            font-size: 13px;
-            margin-top: 6px;
-            padding-left: 4px;
-            display: none;
-            text-shadow: 0 0 5px rgba(255, 74, 74, 0.5);
-        }
-        
-        /* 颜色代码样式 */
-        .color-code {
-            font-weight: bold;
-        }
-        
-        /* 粒子背景效果 */
-        .particles {
-            position: fixed;
+
+        .copy-interface::before {
+            content: '';
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
-            z-index: -1;
+            background: linear-gradient(135deg, 
+                rgba(120, 119, 198, 0.2), 
+                rgba(255, 119, 198, 0.1)
+            );
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .copy-interface:hover::before {
+            opacity: 1;
+        }
+
+        .copy-interface:hover {
+            border-color: rgba(120, 119, 198, 0.8);
+            color: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(120, 119, 198, 0.3);
+        }
+
+        .system-log {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 18px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .log-title {
+            color: rgba(120, 119, 198, 0.9);
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(120, 119, 198, 0.3);
+            padding-bottom: 8px;
+        }
+
+        .log-text {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .spatial-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: 
+                linear-gradient(135deg, 
+                    rgba(0, 0, 0, 0.8), 
+                    rgba(120, 119, 198, 0.2)
+                );
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(120, 119, 198, 0.4);
+            border-radius: 16px;
+            padding: 16px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            z-index: 1000;
+            animation: spatialToast 3s ease forwards;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+
+        @keyframes spatialToast {
+            0% {
+                opacity: 0;
+                transform: translateX(100%) scale(0.8);
+                filter: blur(10px);
+            }
+            15% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                filter: blur(0);
+            }
+            85% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+                filter: blur(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100%) scale(0.8);
+                filter: blur(10px);
+                visibility: hidden;
+            }
+        }
+
+        /* 彩色文本样式 */
+        .colored-text {
+            display: inline;
+            white-space: pre-line;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 16px;
+            }
+
+            .glass-panel {
+                max-width: 100%;
+                border-radius: 20px;
+            }
+
+            .panel-header {
+                padding: 28px 24px 20px;
+            }
+
+            .spatial-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+                margin-bottom: 16px;
+            }
+
+            .panel-title {
+                font-size: 22px;
+            }
+
+            .panel-content {
+                padding: 0 24px 28px;
+            }
+
+            .spatial-input {
+                height: 48px;
+                padding: 0 18px;
+            }
+
+            .device-matrix {
+                padding: 16px;
+            }
+
+            .matrix-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+                margin-bottom: 10px;
+            }
+
+            .matrix-row:last-child {
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .matrix-value {
+                max-width: 100%;
+                word-break: break-all;
+            }
+
+            .spatial-button {
+                padding: 14px 20px;
+                font-size: 15px;
+            }
+
+            .secondary-action {
+                padding: 12px 18px;
+                font-size: 13px;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) and (pointer: coarse) {
+            .spatial-input {
+                min-height: 48px;
+            }
+
+            .spatial-button, .secondary-action {
+                min-height: 44px;
+            }
+
+            .copy-interface {
+                min-height: 36px;
+                min-width: 80px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 粒子背景 -->
-    <div class="particles" id="particles"></div>
-    
-    <!-- 加载中区域 -->
-    <div class="scifi-loading" id="loading">
-        <div class="scifi-loading-spinner"></div>
-        <div class="scifi-loading-text">验证中...</div>
-    </div>
+    <div class="glass-panel">
+        <div class="panel-header">
+            <div class="spatial-icon">🔮</div>
+            <h1 class="panel-title" id="title">卡密验证</h1>
+            <div class="panel-subtitle" id="announcement">请输入您的卡密进行验证，验证通过后即可使用全部功能</div>
+        </div>
 
-    <!-- 主内容区域（初始隐藏） -->
-    <div class="scifi-container" id="main-content" style="display: none;">
-        <!-- 标题（由原生配置填充） -->
-        <h1 class="scifi-title" id="dialog-title"></h1>
+        <div class="panel-content">
+            <div class="input-container">
+                <label class="input-label" for="cardInput">认证密钥</label>
+                <input type="text" class="spatial-input" id="cardInput" placeholder="输入您的卡密..." autocomplete="off" autofocus>
+            </div>
 
-        <!-- 公告（由原生配置填充，可选） -->
-        <div class="scifi-announcement" id="announcement"></div>
+            <div class="device-matrix">
+                <div class="matrix-row">
+                    <span class="matrix-key">Device ID</span>
+                    <span class="matrix-value" id="deviceId">正在获取...</span>
+                </div>
+                <div class="matrix-row">
+                    <span class="matrix-key">Install Date</span>
+                    <span class="matrix-value" id="installDate">正在获取...</span>
+                </div>
+                <div class="matrix-row">
+                    <button class="copy-interface" onclick="copyDeviceId()">Copy Device ID</button>
+                </div>
+            </div>
 
-        <!-- ID显示与复制 -->
-        <div class="scifi-id-group">
-            <div class="scifi-id-label">设备标识码</div>
-            <div class="scifi-id-value">
-                <span id="device-id">加载中...</span>
-                <button class="scifi-copy-btn" onclick="copyId()">复制</button>
+            <button class="spatial-button" onclick="verifyCard()">验证认证</button>
+            
+            <button class="secondary-action" id="actionButton" style="display: none;" onclick="openButtonLink()">次要操作</button>
+
+            <div class="system-log">
+                <div class="log-title">System Status</div>
+                <div class="log-text" id="notice">系统已就绪，等待身份验证...
+空间计算环境已加载完成。</div>
             </div>
         </div>
-
-        <!-- 卡密输入框 -->
-        <div class="scifi-input-group">
-            <input type="text" class="scifi-input" id="verify-code" placeholder="请输入访问密钥" maxlength="200" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-            <div class="scifi-input-hint">密钥长度为8-200位，含字母和数字</div>
-            <div class="scifi-error" id="error-message"></div>
-        </div>
-
-        <!-- 功能按钮组 -->
-        <div class="scifi-btn-group">
-            <button class="scifi-btn" onclick="submitVerify()">验证授权</button>
-        </div>
-
-        <!-- 自定义按钮（由原生配置控制显示/隐藏） -->
-        <div class="scifi-custom-btn-group" id="custom-button-group" style="display: none;">
-            <button class="scifi-btn" id="custom-button" onclick="openButtonLink()">获取密钥</button>
-        </div>
     </div>
 
-    <script>
-        // 创建粒子背景
-        function createParticles() {
-            const container = document.getElementById('particles');
-            const count = 40;
-            
-            for (let i = 0; i < count; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 3 + 1 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.background = '#4a4fff';
-                particle.style.borderRadius = '50%';
-                particle.style.boxShadow = '0 0 5px #4a4fff';
-                
-                // 随机位置
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                
-                // 动画
-                const duration = Math.random() * 10 + 10;
-                particle.style.animation = `float ${duration}s linear infinite`;
-                
-                const keyframes = `
-                @keyframes float {
-                    0% { transform: translate(0, 0); opacity: ${Math.random() * 0.5 + 0.2}; }
-                    50% { transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px); opacity: ${Math.random() * 0.5 + 0.5}; }
-                    100% { transform: translate(0, 0); opacity: ${Math.random() * 0.5 + 0.2}; }
-                }`;
-                
-                const styleSheet = document.createElement('style');
-                styleSheet.textContent = keyframes;
-                document.head.appendChild(styleSheet);
-                
-                container.appendChild(particle);
-            }
-        }
+    <div class="spatial-notification" id="toast" style="display: none;"></div>
 
-        // 解析颜色代码的函数
-        function parseColorCodes(text) {
-            // 匹配6位或3位的十六进制颜色代码
-            const colorRegex = /#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})([^#]*?)(?=#|$)/g;
+    <script>
+        // 解析颜色代码文本的函数，支持换行符
+        function parseColoredText(text) {
+            if (!text) return '';
+            
+            // 先处理换行符，将 \n 转换为 <br> 标签
+            text = text.replace(/\\n/g, '\n');
+            
+            // 正则表达式匹配十六进制颜色代码（#后跟3或6位十六进制数字）
+            const colorRegex = /#([0-9A-Fa-f]{3}){1,2}/g;
             let result = '';
             let lastIndex = 0;
             let match;
             
-            // 如果没有颜色代码，直接返回文本
-            if (!text.includes('#')) {
-                return text;
-            }
-            
-            // 遍历所有匹配项
             while ((match = colorRegex.exec(text)) !== null) {
-                // 添加匹配项之前的文本
-                result += text.substring(lastIndex, match.index);
+                // 添加匹配前的文本
+                const textBefore = text.substring(lastIndex, match.index);
+                result += processNewlines(textBefore);
                 
-                const colorCode = match[1];
-                const content = match[2];
+                // 获取颜色代码
+                const colorCode = match[0];
                 
-                // 如果是3位颜色代码，扩展为6位
-                const fullColorCode = colorCode.length === 3 
-                    ? colorCode.split('').map(c => c + c).join('')
-                    : colorCode;
+                // 找到颜色代码后的文本结束位置（直到下一个颜色代码或字符串结束）
+                const nextColorIndex = text.indexOf('#', match.index + 1);
+                const textEnd = nextColorIndex !== -1 ? nextColorIndex : text.length;
+                const coloredText = text.substring(match.index + colorCode.length, textEnd);
                 
-                // 创建带颜色的span
-                result += `<span class="color-code" style="color: #${fullColorCode};">${content}</span>`;
+                // 创建带颜色的span，并处理其中的换行符
+                result += `<span class="colored-text" style="color: ${colorCode}">${processNewlines(coloredText)}</span>`;
                 
-                lastIndex = match.index + match[0].length;
+                lastIndex = textEnd;
             }
             
             // 添加剩余文本
-            result += text.substring(lastIndex);
+            const remainingText = text.substring(lastIndex);
+            result += processNewlines(remainingText);
             
             return result;
         }
 
-        // 初始化：等待原生配置数据，渲染页面
-        window.onload = function() {
-            // 创建粒子背景
-            createParticles();
-            
+        // 处理换行符的函数
+        function processNewlines(text) {
+            if (!text) return '';
+            // 将换行符转换为 <br> 标签
+            return text.replace(/\n/g, '<br>');
+        }
+
+        // 初始化配置
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从NativeBridge获取配置数据
             try {
-                // 调用原生接口获取配置数据（NativeBridge由HtmlDialogHelper注入）
                 const configStr = window.NativeBridge.getConfigData();
-                const config = JSON.parse(configStr || '{}');
+                const config = JSON.parse(configStr);
                 
-                console.log('获取到配置:', config);
-                
-                // 填充配置到页面（解析颜色代码）
-                const titleElement = document.getElementById('dialog-title');
-                const announcementElement = document.getElementById('announcement');
-                
+                // 应用配置 - 处理带颜色代码的标题
                 if (config.title) {
-                    titleElement.innerHTML = parseColorCodes(config.title);
-                } else {
-                    titleElement.textContent = '系统访问验证';
+                    const titleElement = document.getElementById('title');
+                    titleElement.innerHTML = parseColoredText(config.title);
                 }
                 
+                // 处理带颜色代码的公告
                 if (config.announcement) {
-                    announcementElement.innerHTML = parseColorCodes(config.announcement);
-                } else {
-                    announcementElement.textContent = '请输入您的访问密钥以完成身份验证';
+                    const announcementElement = document.getElementById('announcement');
+                    announcementElement.innerHTML = parseColoredText(config.announcement);
                 }
                 
-                // 显示设备ID
                 if (config.deviceId) {
-                    document.getElementById('device-id').textContent = config.deviceId;
+                    document.getElementById('deviceId').textContent = config.deviceId;
                 }
                 
-                // 控制自定义按钮显示/隐藏
-                const customBtnGroup = document.getElementById('custom-button-group');
-                if (config.showButton === true) {
-                    customBtnGroup.style.display = 'flex';
-                    
-                    // 设置自定义按钮文本（如果提供了buttonText）
-                    if (config.buttonText) {
-                        document.getElementById('custom-button').textContent = config.buttonText;
-                    }
+                if (config.installDate) {
+                    document.getElementById('installDate').textContent = config.installDate;
                 }
                 
-                // 切换到主内容（隐藏加载中）
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
+                if (config.buttonText && config.showButton) {
+                    const actionButton = document.getElementById('actionButton');
+                    actionButton.textContent = config.buttonText;
+                    actionButton.style.display = 'block';
+                }
                 
-                // 自动聚焦到输入框
-                setTimeout(() => {
-                    const input = document.getElementById('verify-code');
-                    input.focus();
-                    
-                    // 额外的触摸事件处理，确保移动设备键盘弹出
-                    input.addEventListener('touchstart', function(e) {
-                        e.stopPropagation();
-                        this.focus();
-                    });
-                    
-                    input.addEventListener('touchend', function(e) {
-                        e.stopPropagation();
-                        this.focus();
-                    });
-                    
-                    input.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        this.focus();
-                    });
-                }, 300);
+                // 自动聚焦输入框
+                document.getElementById('cardInput').focus();
                 
-            } catch (e) {
-                console.error('配置加载失败:', e);
-                alert('配置加载失败：' + e.message);
-                closeDialog();
+            } catch (error) {
+                showToast('Configuration Error');
+                console.error('配置加载错误:', error);
             }
-        };
-
-        // 1. 复制ID到剪贴板（调用原生复制接口）
-        function copyId() {
-            try {
-                const deviceId = document.getElementById('device-id').textContent;
-                // 调用原生copyId方法
-                window.NativeBridge.copyId();
-                // 提示用户
-                alert('设备标识码已复制：\n' + deviceId);
-            } catch (e) {
-                console.error('复制失败:', e);
-                alert('复制失败：' + e.message);
-            }
-        }
-
-        // 2. 提交卡密验证（调用原生验证接口）
-        function submitVerify() {
-            const verifyCode = document.getElementById('verify-code').value.trim();
-            const errorElement = document.getElementById('error-message');
-            
-            // 隐藏之前的错误信息
-            errorElement.style.display = 'none';
-            
-            // 前端简单校验
-            if (!verifyCode) {
-                showError('请输入访问密钥');
+        });
+        
+        // 验证卡密
+        function verifyCard() {
+            const input = document.getElementById('cardInput').value.trim();
+            if (!input) {
+                showToast('Please enter authentication key');
                 return;
             }
             
-            if (verifyCode.length < 8 || verifyCode.length > 200) {
-                showError('密钥长度应为8-200位');
-                return;
-            }
-            
-            // 显示加载中
-            document.getElementById('main-content').style.display = 'none';
-            document.getElementById('loading').style.display = 'block';
-            document.querySelector('.scifi-loading-text').textContent = '验证中...';
-            
-            // 调用原生验证接口
-            try {
-                window.NativeBridge.verifyInput(verifyCode);
-            } catch (e) {
-                console.error('验证调用失败:', e);
-                // 恢复显示
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('main-content').style.display = 'block';
-                showError('验证调用失败：' + e.message);
-            }
+            window.NativeBridge.verifyInput(input);
         }
-
-        // 显示错误信息
-        function showError(message) {
-            const errorElement = document.getElementById('error-message');
-            errorElement.textContent = message;
-            errorElement.style.display = 'block';
+        
+        // 复制设备ID
+        function copyDeviceId() {
+            window.NativeBridge.copyId();
+            showToast('Device ID copied to spatial clipboard');
         }
-
-        // 3. 打开自定义按钮链接（调用原生链接接口）
+        
+        // 打开按钮链接
         function openButtonLink() {
-            try {
-                // 调用原生openButtonLink方法
-                window.NativeBridge.openButtonLink();
-            } catch (e) {
-                console.error('打开链接失败:', e);
-                alert('打开链接失败：' + e.message);
-            }
+            window.NativeBridge.openButtonLink();
         }
-
-        // 4. 关闭弹窗（调用原生关闭接口）
+        
+        // 关闭对话框
         function closeDialog() {
-            try {
-                window.NativeBridge.closeDialog();
-            } catch (e) {
-                console.error('关闭弹窗失败:', e);
-                // 降级处理：直接隐藏页面
-                document.body.innerHTML = '<div style="text-align:center;padding:20px;">验证系统已关闭</div>';
-            }
+            window.NativeBridge.closeDialog();
         }
-
-        // 防止页面滚动（但允许输入框内的滚动）
-        document.addEventListener('touchmove', function(e) {
-            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
-                e.preventDefault();
+        
+        // 显示提示信息
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000);
+        }
+        
+        // 输入框回车键提交
+        document.getElementById('cardInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                verifyCard();
             }
-        }, { passive: false });
+        });
+        
+        // 页面加载完成后触发键盘
+        window.onload = function() {
+            setTimeout(() => {
+                try {
+                    window.NativeBridge.triggerKeyboard();
+                } catch (e) {
+                    console.log('键盘触发失败:', e);
+                }
+            }, 500);
+        };
     </script>
 </body>
 </html>
